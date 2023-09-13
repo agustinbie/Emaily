@@ -1,28 +1,19 @@
 const express = require("express");
-const passport = require("passport");
-const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const mongoose = require("mongoose");
 const keys = require("./config/keys");
+/* const passportConfig = require("./services/passport"); //para que el server ejecute passport al iniciar */
+ require("./services/passport"); //como passport.js no exporta nada, es al pedo asignarlo a una variable passportConfig como la linea anterior, se puede solo ejecutar con require a secas
+//const authRoutes = require("./routes/authRoutes");  //asigna el export de authRoutes.js a una variable
+
+
+mongoose.connect(keys.mongoURI);
 
 const app = express();
 
-passport.use(new GoogleStrategy({
-    clientID: keys.googleClientID,
-    clientSecret: keys.googleClientSecret,
-    callbackURL: "/auth/google/callback"
-                    }, (accessToken, refreshToken, profile, done) => {
-                            console.log("access toke", accessToken);
-                            console.log("refresh token", refreshToken);
-                            console.log("profile", profile);
-                                    })); //GoogleStrategy({},()=>{});  instancia la estrategia con dos parametros: el primer parametro es un objeto con las claves de cliente
-                                            // y el segundo parametro es una arrow function
-                                            //ID client google oauth:  
-                                            //secret client google oauth:  en keys.js
+//authRoutes(app); //usa la variable pasandole el parametro app = express() para que se ejecute el export de authRoutes.js 
+//o lo que es lo mismo
+require("./routes/authRoutes")(app); //el require equivale a la funcion de export de authRoutes.js y le pasa el parametro (app) inmediatamente.
 
-app.get("/auth/google", passport.authenticate("google", {scope: ["profile","email"]}));
-                     //.authenticate usa el primer parametro "google" por defecto para referince a la estrategia de autenticacion de google Oauth. El segundo parametro es un objeto que contiene el scope con la info que queremos obtener del usuario de google
-
-app.get("/auth/google/callback", passport.authenticate("google")); //si bien este handler es parecido al line19, en esta request va a venir el codigo de google ya que el usuario dió permiso, GoogleStrategy reconoce este codigo y actua distinto.
-//con este handler ahora si probas localhost:5000/auth/google y das permiso, la pagina va a estar esperando pero nos envia el codigo que GoogleStrategy lo toma como el Access Token que pusimos en la linea 12 y lo logue ane la consola (flow raro entre lineas)
 
 
 /* app.get("/", (req, res) => {
