@@ -1,14 +1,31 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const cookieSession = require("cookie-session"); //para manejar cookies porque express no puede
+const passport = require("passport");
 const keys = require("./config/keys");
 /* const passportConfig = require("./services/passport"); //para que el server ejecute passport al iniciar */
+require("./models/user"); //esto tiene que ir antes que el require de passport para crear la coleccion y que passport la pueda usar
  require("./services/passport"); //como passport.js no exporta nada, es al pedo asignarlo a una variable passportConfig como la linea anterior, se puede solo ejecutar con require a secas
 //const authRoutes = require("./routes/authRoutes");  //asigna el export de authRoutes.js a una variable
+
 
 
 mongoose.connect(keys.mongoURI);
 
 const app = express();
+
+
+//--------
+app.use(
+    cookieSession({
+        maxAge: 30 * 24 * 60 * 60 * 1000, //que exista por 30 dias en microsegundos
+        keys: [keys.cookieKey]  //inventa una cualquiera en el config con git ignore
+    })
+);
+app.use(passport.initialize());
+app.use(passport.session());
+//----------
+
 
 //authRoutes(app); //usa la variable pasandole el parametro app = express() para que se ejecute el export de authRoutes.js 
 //o lo que es lo mismo
