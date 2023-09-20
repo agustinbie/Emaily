@@ -56,3 +56,8 @@ app.listen(PORT);
 //por ultimo, agregar el file .gitignore para no hacer commit de la carpeta node_modules que es pesada y no hace falta proveer las dependencias.
 
 // deploy en render con url :   https://emaily-server-7l04.onrender.com
+
+
+//una vez que ejecutes create react app, pasa a agregar 2 scripts mas al packge json para poder correr ambos servidores desde un mismo terminal
+//el primero es "client": "npm run start --prefix client" para que ejecute el comando npm dentro de la carpeta react
+//"dev": "concurrently \"npm run server\" \"npm run client\" "  es el segundo script que ejecuta los primeros dos scripts al mismo tiempo gracias al modulo concurrently que hay que instalar desde npm
