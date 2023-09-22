@@ -7,3 +7,6 @@ module.exports = function (app) {
     })
   );
 };
+
+
+//npm install redux react-redux react-router-dom@5
