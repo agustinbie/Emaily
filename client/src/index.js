@@ -1,3 +1,4 @@
+import "materialize-css/dist/css/materialize.min.css";  //cuando no pones from "./", webpack interpreta que se trata de un npm module y lo busca directamente en el directorio de node_modules. Y como no va a guardar nada como una variable, no hace falta importar como materializeCSS from "materiliaze"; solo import
 import React from "react";
 import ReactDOM from "react-dom";  //en el front react usa webpack y babel, que funcionan bien con ES2015 modules, por eso usamos import sintax. En cambio en el back de express usamos node js que funciona solo con common js 
 import {Provider} from "react-redux";
