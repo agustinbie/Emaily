@@ -8,9 +8,12 @@ const Dashboard = () => <h2>Dashboard</h2>
 const SurveyNew = () => <h2>SurveyNew</h2>
 const Landing = () => <h2>Landing</h2>
 
+//como primer paso al loguear la app, tenemos que verificar si el usuario está logueado, para cambiar el contenidop de la nav bar
+
+//react espera que el primer div sea de clase "containver" para darle un poco de margen a los elementos, sino se ve muy pegado a la pantalla
 const App = ()=> {
     return (
-        <div>
+        <div className="container">
             <BrowserRouter>
                 <div>
                     <Header></Header>

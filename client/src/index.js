@@ -3,6 +3,7 @@ import React from "react";
 import ReactDOM from "react-dom";  //en el front react usa webpack y babel, que funcionan bien con ES2015 modules, por eso usamos import sintax. En cambio en el back de express usamos node js que funciona solo con common js 
 import {Provider} from "react-redux";
 import { createStore, applyMiddleware} from "redux";
+import reduxThunk from "redux-thunk";
 
 
 
@@ -10,7 +11,7 @@ import App from "./component/App";
 import reducers from "./reducers";
 
 //redux store
-const store = createStore(reducers, {}, applyMiddleware());
+const store = createStore(reducers, {}, applyMiddleware(reduxThunk));
 
 
 ReactDOM.render(
