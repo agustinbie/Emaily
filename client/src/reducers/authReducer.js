@@ -11,3 +11,4 @@ export default function(state = null, action) { //state = null para mostrarlo as
             return state;
     }
 }
+//entonces el reducer va a retornar null, false o el user model (contenido en el action.payload)
