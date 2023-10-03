@@ -6,9 +6,11 @@ import * as actions from "../actions";
 
 //const Header = () => <h2>Header</h2>
 import Header from "./Header";
+import Landing from "./Landing";
 const Dashboard = () => <h2>Dashboard</h2>
 const SurveyNew = () => <h2>SurveyNew</h2>
-const Landing = () => <h2>Landing</h2>
+//const Landing = () => <h2>Landing</h2>
+
 
 //como primer paso al loguear la app, tenemos que verificar si el usuario está logueado, para cambiar el contenidop de la nav bar
 //instala dos librerias, axio y redux-thunk

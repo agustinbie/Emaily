@@ -1,5 +1,6 @@
 import React, {Component} from "react";
 import { connect } from "react-redux";
+import {Link} from "react-router-dom";
 
 class Header extends Component {
 
@@ -16,14 +17,18 @@ renderContent() {
             return <li><a href="/api/logout">Logout</a></li>;
     }
 }
-
+//el link tag indica a react router qué componentes loguear sin cambiar el html document, el anchor tag te redirige a un html document completamente distinto. Si this.props.auth existe, (true, es un objeto con el user logueado) entonces redirige al dashboard, sino lo manda al Landing para que se loguee.
     render() {
         //console.log(this.props);
         return (
             <div>
                 <nav>
                     <div className="nav-wrapper">
-                    <a href="" className="left brand-logo">Emaly</a>
+                    <Link 
+                    to={this.props.auth ? "/surveys" : "/"}
+                    className="left brand-logo"
+                    >
+                        Emaly</Link>
                     <ul id="nav-mobile" className="right hide-on-med-and-down">
                        {this.renderContent()}
                         
