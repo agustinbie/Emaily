@@ -20,3 +20,7 @@ ReactDOM.render(
 
 
 //revisar nota nro 74 despues de ver el video 75
+// npm install --save react-stripe-checkout  
+
+console.log("stripe key is ", process.env.REACT_APP_STRIPE_PBKEY); //no vamos a usar la secret key porque no vamos a ctivar la cuenta de stripe
+console.log("Enviroment is ", process.env.NODE_ENV);
