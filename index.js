@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cookieSession = require("cookie-session"); //para manejar cookies porque express no puede
 const passport = require("passport");
+const bodyParser = require("body-parser");
 const keys = require("./config/keys");
 /* const passportConfig = require("./services/passport"); //para que el server ejecute passport al iniciar */
 require("./models/user"); //esto tiene que ir antes que el require de passport para crear la coleccion y que passport la pueda usar
@@ -10,11 +11,13 @@ require("./models/user"); //esto tiene que ir antes que el require de passport p
 
 
 
+
 mongoose.connect(keys.mongoURI);
 
 const app = express();
 
-
+//---------
+app.use(bodyParser.json()); //middleware para parsear las post u put request que vengan al server
 //--------
 app.use(
     cookieSession({
@@ -30,7 +33,7 @@ app.use(passport.session());
 //authRoutes(app); //usa la variable pasandole el parametro app = express() para que se ejecute el export de authRoutes.js 
 //o lo que es lo mismo
 require("./routes/authRoutes")(app); //el require equivale a la funcion de export de authRoutes.js y le pasa el parametro (app) inmediatamente.
-
+require("./routes/billingRoutes")(app);// estas routes exportan una funcion que pasan inmediatamente a la app
 
 
 /* app.get("/", (req, res) => {

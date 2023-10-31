@@ -1,6 +1,7 @@
 import React, {Component} from "react";
 import { connect } from "react-redux";
 import {Link} from "react-router-dom";
+import Payments from "./Payments";
 
 class Header extends Component {
 
@@ -14,9 +15,12 @@ renderContent() {
             return <li><a href="/auth/google">Login With Google</a></li>;
            
         default:
-            return <li><a href="/api/logout">Logout</a></li>;
+            return [
+            <li key="1"><Payments/></li>,
+            <li key="2"s><a href="/api/logout">Logout</a></li>];
     }
-}
+}//si retornas un array, el browser te va a tirar warning de que le faltan keys a cada elemento, por eso le agrega la propiedad key="" a cada <li>
+
 //el link tag indica a react router qué componentes loguear sin cambiar el html document, el anchor tag te redirige a un html document completamente distinto. Si this.props.auth existe, (true, es un objeto con el user logueado) entonces redirige al dashboard, sino lo manda al Landing para que se loguee.
     render() {
         //console.log(this.props);
