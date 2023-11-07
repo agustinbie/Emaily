@@ -17,8 +17,9 @@ renderContent() {
         default:
             return [
             <li key="1"><Payments/></li>,
+            <li key="3" style={{margin: "0 10px"}}>Credits: {this.props.auth.credits} </li>,
             <li key="2"s><a href="/api/logout">Logout</a></li>];
-    }
+    } //el header se actualiza automaticamente con el numero de credits que tenga el usuario debido al authreducer. El authReducer está escuchando cuando "action" del tipo FETCH USER, y como el route handler de stripe usa la action handletoken que hace un dispatch action de type FETCH USER, el authReducer la escucha y actualiza todo el state de redux con el usuario recien actualizado de la database y todos los componentes de la app se renderizan con ese nuevo this.props.auth actualizado.
 }//si retornas un array, el browser te va a tirar warning de que le faltan keys a cada elemento, por eso le agrega la propiedad key="" a cada <li>
 
 //el link tag indica a react router qué componentes loguear sin cambiar el html document, el anchor tag te redirige a un html document completamente distinto. Si this.props.auth existe, (true, es un objeto con el user logueado) entonces redirige al dashboard, sino lo manda al Landing para que se loguee.
