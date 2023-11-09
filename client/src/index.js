@@ -24,3 +24,10 @@ ReactDOM.render(
 
 console.log("stripe key is ", process.env.REACT_APP_STRIPE_PBKEY); //no vamos a usar la secret key porque no vamos a ctivar la cuenta de stripe
 console.log("Enviroment is ", process.env.NODE_ENV);
+
+//acordarse que cada vez que quieras hacer un deploy hay que hacer el build de create react app 
+//npm run build  dentro del directorio client
+//en realidad el buiid no se incluye en el deploy, pero todo el seteo que se hace en el index del server express con las rutas de build es porque el build se hace pero en el host (heroku o render)
+//para indicarle al host que hay un client side (create react app) que hay que hacer el build hay que agregar un script en el package json del server
+//"heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client"
+//en render hay que cargarle los scripts en settings, ver nota 127
