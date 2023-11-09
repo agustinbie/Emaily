@@ -41,6 +41,22 @@ require("./routes/billingRoutes")(app);// estas routes exportan una funcion que 
 }); */
 
 
+//---
+if (process.env.NODE_ENV === "production") {
+    //express will serve up production assets
+    //like our main.js file, or main.css file (build)
+    app.use(express.static("client/build")); //ni la requests viene con una ruta que no esta definida como handler en el server, que la busque primero en la carpeta client/build
+
+
+    //express will serve up the index.html file
+    //if it doesnt recognize the route
+    const path = require("path");
+    app.get("*", (req, res) => {
+        res.sendFile(path.resolve(__dirname, "client", "build", "index.html")); //si la ruta de la request entranto no matchea con ./routes/authRoutes  ; ./routes/billingRoutes ni con alguna ruta dentro de client/build  (porque en ese orden se ejecuta el codigo), entonces entrega el index.html del client build
+    })
+
+};
+
 
 const PORT = process.env.PORT || 5000; //si estas corriendo el server en la compu local, la variable en entorno no va a estar declarada como con heroku, asiq usa el puerto 5000 en su lugar.
 
