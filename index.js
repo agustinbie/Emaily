@@ -6,7 +6,8 @@ const bodyParser = require("body-parser");
 const keys = require("./config/keys");
 /* const passportConfig = require("./services/passport"); //para que el server ejecute passport al iniciar */
 require("./models/user"); //esto tiene que ir antes que el require de passport para crear la coleccion y que passport la pueda usar
- require("./services/passport"); //como passport.js no exporta nada, es al pedo asignarlo a una variable passportConfig como la linea anterior, se puede solo ejecutar con require a secas
+require("./models/survey"); 
+require("./services/passport"); //como passport.js no exporta nada, es al pedo asignarlo a una variable passportConfig como la linea anterior, se puede solo ejecutar con require a secas
 //const authRoutes = require("./routes/authRoutes");  //asigna el export de authRoutes.js a una variable
 
 
