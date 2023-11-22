@@ -35,7 +35,7 @@ app.use(passport.session());
 //o lo que es lo mismo
 require("./routes/authRoutes")(app); //el require equivale a la funcion de export de authRoutes.js y le pasa el parametro (app) inmediatamente.
 require("./routes/billingRoutes")(app);// estas routes exportan una funcion que pasan inmediatamente a la app
-
+require("./routes/surveyRoutes")(app);
 
 /* app.get("/", (req, res) => {
     res.send({hi: "there pal"});
