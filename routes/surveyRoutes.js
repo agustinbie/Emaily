@@ -1,11 +1,15 @@
 const mongoose = require("mongoose");
 const requireLogin = require("../middlewares/requireLogin");
 const requireCredits = require("../middlewares/requireCredits");
+const Mailer = require("../services/mailer");
+const surveyTemplate = require("../services/emailTemplates/surveyTemplate");
 
 const Survey = mongoose.model("surveys");
 
-module.exports = app => {
-    app.post("/api/surveys"), requireLogin, requireCredits, (req, res) => {// requireLogin es la funcion que exporta el middleware, se ejecutan todas las funciones que pongamos como argunmentos hasta que llegue a la arrow function del routehandler
+module.exports = app => { 
+
+    //                              este async tiene que estar porque mailer.send() es async tambien 
+    app.post("/api/surveys", requireLogin, requireCredits, async (req, res) => {// requireLogin es la funcion que exporta el middleware, se ejecutan todas las funciones que pongamos como argunmentos hasta que llegue a la arrow function del routehandler
         //la req que estamos esperando del front tiene que tener atributos title, subject, body, recipients, _user
         const {title, subject, body, recipients} = req.body; //req.body es el default de js, no es el atributo de la request que estamos desestructurando 
         const survey = new Survey({
@@ -19,6 +23,30 @@ module.exports = app => {
             _user: req.user.id, //id de mongoos
             dateSent: Date.now()
         });
-    }
+
+        //great place to send a email!
+        const mailer = new Mailer(survey, surveyTemplate(survey)); //cada vez que creen un survey nuevo se va a generar un mailer con los datos de la survey y un template para el body 
+        
+        try {
+        await mailer.send();// para testear estos mails no usa postman porque se complica con el requerimiento de estar logueado. En su lugar desde el browser usa el modulo axios para hacer las request al server. Importa Axios desde el index del client side
+        //como mailer.send() es async function, está esperando la respuesta de la api de sendgrid. Hay que marcar como async esta arrow function entera del surveyroute handler. 
+        
+        await survey.save();
+        req.user.credits -= 1;
+        const user = await req.user.save();
+
+        res.send(user); // para actualizar el estado del user logueado, con menos creditos
+        } catch (err) {
+            res.status(422).send(err);
+        }
+    });
+
+
+    app.get("/api/surveys/thanks", (req, res) => {// en el template pusimos una url que te manda a esta ruta despues de clickear la survey desde el email
+        res.send("Thanks for voting!");
+    })
 
 };
+
+//se crea un mailer, un objeto que contiene la instacia de survey junto a un template de email, y este mailer se envia a un provider externo que se encarga de distribuir hacia todos los recipients
+//sendgrid.com

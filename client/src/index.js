@@ -9,6 +9,8 @@ import reduxThunk from "redux-thunk";
 
 import App from "./component/App";
 import reducers from "./reducers";
+//import axios from "axios";
+//window.axios =axios; video 153
 
 //redux store
 const store = createStore(reducers, {}, applyMiddleware(reduxThunk));
