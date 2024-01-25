@@ -6,6 +6,19 @@ const helper = sendgrid.mail; //.mail no se si sirve en postmak
 //console.log(postmark.Models);
 const keys = require("../config/keys");
 
+
+/* const client = new postmark.ServerClient(keys.postmarkKey);
+client.sendEmail({ "From": "agustin.bielewicz@mi.unc.edu.ar",
+    "To": "agustin.bielewicz@mi.unc.edu.ar",
+    "Subject": "Hello from Postmark",
+    "HtmlBody": "<strong>Hello</strong> dear Postmark user.",
+    "TextBody": "Hello from Postmark!",
+    "MessageStream": "broadcast",
+    "TrackLinks": "HtmlAndText"  }); */
+
+
+    
+
 class Mailer extends helper.Mail   {
     constructor({subject, recipients}, content) { //el primer parametro que recibe es la nueva survey que creamos en la surveyRoute y con destructuring extrae las propiedades subject y recipients del objeto survey. El segundo parametro que recibe es el template que es un string de html. De esta forma la clase se puede instaciar con cualquier modelo de email que creemos en el futuro, no solo encuestas
         super();

@@ -1,6 +1,6 @@
 const keys = require("../../config/keys");
 
-module.exports = (survey, template) => {
+module.exports = (survey, url) => {
     return `
         <html>
             <body>
@@ -19,3 +19,4 @@ module.exports = (survey, template) => {
         </html>
     `;
 };
+//no se por que los anchor dan undefined en el mail enviado

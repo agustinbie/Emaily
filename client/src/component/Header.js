@@ -10,7 +10,7 @@ renderContent() {
    
     switch (this.props.auth) {
         case null:
-          return;
+          return <li><a href="/auth/google">Login With Google</a></li>;;
         case false:
             return <li><a href="/auth/google">Login With Google</a></li>;
            

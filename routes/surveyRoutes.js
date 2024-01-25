@@ -1,10 +1,11 @@
 const mongoose = require("mongoose");
 const requireLogin = require("../middlewares/requireLogin");
 const requireCredits = require("../middlewares/requireCredits");
-const Mailer = require("../services/mailer");
+//const Mailer = require("../services/mailer");
 const surveyTemplate = require("../services/emailTemplates/surveyTemplate");
-
+const postmark = require("postmark");
 const Survey = mongoose.model("surveys");
+const keys = require("../config/keys");
 
 module.exports = app => { 
 
@@ -24,21 +25,42 @@ module.exports = app => {
             dateSent: Date.now()
         });
 
-        //great place to send a email!
-        const mailer = new Mailer(survey, surveyTemplate(survey)); //cada vez que creen un survey nuevo se va a generar un mailer con los datos de la survey y un template para el body 
-        
+        /* console.log(survey.recipients[0].email);
+        console.log(survey.title);
+        console.log(survey.subject);
+        console.log(survey.body);
+        console.log(surveyTemplate(survey)); */
+
         try {
-        await mailer.send();// para testear estos mails no usa postman porque se complica con el requerimiento de estar logueado. En su lugar desde el browser usa el modulo axios para hacer las request al server. Importa Axios desde el index del client side
-        //como mailer.send() es async function, está esperando la respuesta de la api de sendgrid. Hay que marcar como async esta arrow function entera del surveyroute handler. 
+        const client = new postmark.ServerClient(keys.postmarkKey);
+         await client.sendEmail({ "From": "agustin.bielewicz@mi.unc.edu.ar",
+            "To": survey.recipients[0].email,
+            "Subject": survey.subject,
+            "HtmlBody": surveyTemplate(survey, keys.redirectDomain),
+            "TextBody": survey.body,
+            "MessageStream": "broadcast",
+            "TrackLinks": "HtmlAndText"  });
+
+        //great place to send a email!
+        //const mailer = new Mailer(survey, surveyTemplate(survey)); //cada vez que creen un survey nuevo se va a generar un mailer con los datos de la survey y un template para el body 
         
-        await survey.save();
-        req.user.credits -= 1;
-        const user = await req.user.save();
+        /* try { */
+        //await mailer.send();// para testear estos mails no usa postman porque se complica con el requerimiento de estar logueado. En su lugar desde el browser usa el modulo axios para hacer las request al server. Importa Axios desde el index del client side
+        //como mailer.send() es async function, está esperando la respuesta de la api de sendgrid. Hay que marcar como async esta arrow function entera del surveyroute handler. linea 12
+        
+         await survey.save();
+         req.user.credits -= 1;
+        const user = await  req.user.save(); //EN LA WEB DE MONGODB RECORDAR CAMBIAR DE EMALYPROD A PROJECT 0 SEGUN CORRESPONDA DONDE ESTES HACIENDO LAS PRUBEAS
 
         res.send(user); // para actualizar el estado del user logueado, con menos creditos
-        } catch (err) {
-            res.status(422).send(err);
+        } catch (err){
+                res.status(422).send(err);
         }
+        
+       
+        /* } catch (err) {
+            res.status(422).send(err);
+        } */
     });
 
 
