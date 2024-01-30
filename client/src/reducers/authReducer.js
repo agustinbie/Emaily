@@ -2,7 +2,7 @@ import { FETCH_USER } from "../actions/types";
 
 
 
-export default function(state = null, action) { //state = null para mostrarlo asi hasta que se complete la request de /api/current_user
+export default function myFunction(state = null, action) { //state = null para mostrarlo asi hasta que se complete la request de /api/current_user
     //console.log(action)
     switch (action.type) {
         case FETCH_USER:
