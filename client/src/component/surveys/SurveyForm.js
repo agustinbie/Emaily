@@ -3,6 +3,8 @@ import React, {Component} from "react";
 import {reduxForm, Field} from "redux-form"; //redux form es muy similar a la funcion connect de redux (redux store que esta por encima de todos los componentes para no tener que ir pasando data hasta el componente padre para volver a bajarlo a otro componente)
 import SurveyField from "./SurveyField";
 import _ from "lodash";
+import {Link} from "react-router-dom";
+import validateEmails from "../../utils/validateEmails";
 
 
 const FIELDS = [
@@ -38,11 +40,34 @@ class SurveyForm extends Component { //todos los values de este form tag de redu
             <div>
                 <form onSubmit={this.props.handleSubmit(values => console.log(values))}>
                {this.renderFields()}
-               <button type="submit">Submit</button>
+                <Link to="/surveys" className="red btn-flat white-text">Cancel</Link>
+                 <button className="teal btn-flat right white-text" type="submit">
+                  Next <i className="material-icons right">done</i></button>
+                    
+               
                </form>
             </div>
         )
     }
 }
 
-export default reduxForm({form: "surveyForm"})(SurveyForm); //se conecta igual que connect de redux
+function validate(values) {
+    const errors = {};
+    /* if (!values.title) {
+        errors.title = "You must provide a title"; //reduxForm automaticamente conecta estos errores con los Fields que tengan el mismo nombre para el atributo name
+    }; */
+
+    errors.emails = validateEmails(values.emails || "");
+    //lodash
+    _.each(FIELDS, ({name})=> {
+        if (!values[name]){
+            errors[name] =`You must provide a value`
+        }
+    })
+
+    
+
+    return errors;
+}
+//reduxForm tiene la funcion validate, que determina si el formulario es valido o no. Si la funcion retorna el objeto "errors" vacio, entonces es valido
+export default reduxForm({validate: validate, form: "surveyForm"})(SurveyForm); //se conecta igual que connect de redux
