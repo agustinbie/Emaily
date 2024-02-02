@@ -5,14 +5,9 @@ import SurveyField from "./SurveyField";
 import _ from "lodash";
 import {Link} from "react-router-dom";
 import validateEmails from "../../utils/validateEmails";
+import formFields from "./formFields";
 
 
-const FIELDS = [
-    {label: "Survey Title", name:"title"}, 
-    {label: "Subject Line", name:"subject"},
-    {label: "Email Body", name:"body"},
-    {label: "Recipient List", name:"emails"}
-];
 
 
 class SurveyForm extends Component { //todos los values de este form tag de redux se pueden enviar al backend mediante la funcion handleSubmit provista por redux en los props de este componente
@@ -30,15 +25,15 @@ class SurveyForm extends Component { //todos los values de este form tag de redu
     } */
 
     renderFields(){
-        return _.map(FIELDS, ({label , name}) => {
+        return _.map(formFields, ({label , name}) => {
             return <Field  key={name} component={SurveyField} type="text" label={label} name={name}/>
         })
     }
     
     render() {
-        return (
+        return (          ///este console log es ejecutado solo si el form es valido    <form onSubmit={this.props.handleSubmit(values => console.log(values))}>
             <div>
-                <form onSubmit={this.props.handleSubmit(values => console.log(values))}>
+                  <form onSubmit={this.props.handleSubmit(this.props.onSurveySubmit)}> 
                {this.renderFields()}
                 <Link to="/surveys" className="red btn-flat white-text">Cancel</Link>
                  <button className="teal btn-flat right white-text" type="submit">
@@ -59,7 +54,7 @@ function validate(values) {
 
     errors.emails = validateEmails(values.emails || "");
     //lodash
-    _.each(FIELDS, ({name})=> {
+    _.each(formFields, ({name})=> {
         if (!values[name]){
             errors[name] =`You must provide a value`
         }
@@ -70,4 +65,4 @@ function validate(values) {
     return errors;
 }
 //reduxForm tiene la funcion validate, que determina si el formulario es valido o no. Si la funcion retorna el objeto "errors" vacio, entonces es valido
-export default reduxForm({validate: validate, form: "surveyForm"})(SurveyForm); //se conecta igual que connect de redux
+export default reduxForm({validate: validate, form: "surveyForm", destroyOnUnmount: false})(SurveyForm); //se conecta igual que connect de redux
