@@ -52,7 +52,7 @@ function validate(values) {
         errors.title = "You must provide a title"; //reduxForm automaticamente conecta estos errores con los Fields que tengan el mismo nombre para el atributo name
     }; */
 
-    errors.emails = validateEmails(values.emails || "");
+    errors.recipients = validateEmails(values.recipients || "");
     //lodash
     _.each(formFields, ({name})=> {
         if (!values[name]){

@@ -16,3 +16,10 @@ export const handleToken = (token) => async dispatch => {
     //este action creator envia el token a nuestro backend, hay que llamarlo desde el Payment component cada vez que llegue un token de stripe por haber pagado
     
 }
+
+
+export const submitSurvey = (values, history) => async dispatch => {
+    const res = await axios.post("/api/surveys", values);
+    history.push("/surveys");
+    dispatch({type: FETCH_USER, payload: res.data});
+};
