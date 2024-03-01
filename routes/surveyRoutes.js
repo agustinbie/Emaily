@@ -7,6 +7,12 @@ const postmark = require("postmark");
 const Survey = mongoose.model("surveys");
 const keys = require("../config/keys");
 
+//librerias para manipular records de los webhooks
+const _ = require("lodash");
+const {Path} = require("path-parser");
+const {URL} = require("url");
+//---------
+
 module.exports = app => { 
 
     //                              este async tiene que estar porque mailer.send() es async tambien 
@@ -64,11 +70,53 @@ module.exports = app => {
     });
 
 
-    app.get("/api/surveys/thanks", (req, res) => {// en el template pusimos una url que te manda a esta ruta despues de clickear la survey desde el email
+    app.get("/api/surveys/:surveyId/:choice", (req, res) => {// en el template pusimos una url que te manda a esta ruta despues de clickear la survey desde el email
         res.send("Thanks for voting!");
+        
+    })
+
+
+    app.post("/api/surveys/webhooks", (req, res) => {  //npm install --save lodash path-parser
+        console.log(req.body);
+        const p = new Path("/api/surveys/:surveyId/:choice") ;//la Path library sirve para extraer datos de una url, en este caso queremos extraer : survey Id y la choice
+      
+      
+        _.chain(req.body) //la funcion chain de lodash ayuda a encadenar funciones sin tenes que asignar los resultados a distintas variables
+        .map(({email, url}) => {  //este mapeo esta diseñado para manipular la webhooks data de sendgrid
+            //URL librery sirve para parsear una url y poder manipularla
+           const match = p.test(new URL(url).pathname); //no se puede hacer destructuring aca porque p.test(pathname) puede traer todo undefined (si es que no hay nignuna notificacion del webhook con surveryId y choice en el url) y entonces el destructurin va a dar error
+            if (match) {// si match existe y no es undefined
+                return {email, surveyId: match.surveyId, choice: match.choice};
+            }
+
+        })
+        .compact() //compact es una funcion de lodash que toma un array y le quita todos los undefined que pueda esta conteniendo dentro
+         .uniqBy( "email", "surveyId") //esta funcion de lodash elimina los registros de un array que tengan duplicadas las propiedades que se indiquen como parametros, email y surveyId en este caso. Pero no quiere decir que si hay repetidos email los va a borrar, sino que un mismo email tiene que tener varios records con el mismo surveyId para que se borren
+         .each(({surveyId, email, choice}) => {
+            Survey.updateOne({
+                _id: surveyId,   //en mongo se usa _id para los id de los records
+                recipients: {
+                    $elemMatch: {email: email, responded: false}
+                }
+            }, {$inc: {[choice]: 1},    //le survey coleccion tiene como atributo "yes":0 y "no":0 com default. $inc es un operador de mongoose que incrementa un atributo en las unidades que se le indique en este caso en 1. Como no sabemos si la choice del evento (notificado por sendgrid) es yes or no usar key interpolation para reemplazar [choice] por "yes": +1 o "no": +1 segun el caso (encrementa el numero de votos de la survey)
+            $set: {"recipients.$.responded": true},  //$set es otro operador de mongoose para setear atributos de una coleccion. Dentro de la survey encontrada en elñ primer parametro de la funcion updateOne() va a buscar dentro del atributo recipients:, el elemento encontrado por $elemMatch y a ese elemnto le va a setear la propiedad responden:, por true
+            lastResponded: new Date()  //este es un atributo de la coleccion general Survey, no de cada recipient
+            }).exec();  //.exec() se tiene que poner al final de una query mongo para que se ejecute
+            //este update a la base de datos es async pero como sendgrid no espera ninguna respuesta de nosotros no vamos a marcar el codigo como await
+            // ver video 209 para ver como probar querys de mongo en el terminal con el SLI de node
+        })  
+         .value(); //la funcion value devuelve el array final y termina la cadena
+    
+        res.send({});
     })
 
 };
 
 //se crea un mailer, un objeto que contiene la instacia de survey junto a un template de email, y este mailer se envia a un provider externo que se encarga de distribuir hacia todos los recipients
 //sendgrid.com
+
+
+
+
+
+
