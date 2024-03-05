@@ -1,5 +1,5 @@
 import axios from "axios";
-import { FETCH_USER } from "./types";
+import { FETCH_USER , FETCH_SURVEYS} from "./types";
 
 export const fetchUser = () =>  //esto es un action creator, en redux estos action creator pasa "acciones" a los reducers y estos ultimos cambiar el state en el redux store y asi vuelven a loguear los componentes. 
     async dispatch => { //con reduxThunk, en vez de retornar directamente una accion, vamos a retornar una funcion que actua de dispensador, el dispatch va a acumular acciones hasta que las request se completen, y ahi recien va a enviar las acciones a los reducers.
@@ -23,3 +23,9 @@ export const submitSurvey = (values, history) => async dispatch => {
     history.push("/surveys");
     dispatch({type: FETCH_USER, payload: res.data});
 };
+
+export const fetchSurveys = () => async dispatch => {
+    const res = await axios.get("/api/surveys");
+
+    dispatch({type: FETCH_SURVEYS, payload: res.data});
+}

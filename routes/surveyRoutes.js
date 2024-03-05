@@ -15,6 +15,13 @@ const {URL} = require("url");
 
 module.exports = app => { 
 
+    app.get("/api/surveys", requireLogin, async (req, res) => {
+        const surveys = await Survey.find({_user: req.user.id})  //esta respuesta puede inlcuir 50 surveys del usuario con 10k recipients cada una
+            .select({recipients: false});  //cpon el metodo select() de mongoose se puede incluir o excluir campos del record en la coleccion
+        res.send(surveys);
+    })
+
+
     //                              este async tiene que estar porque mailer.send() es async tambien 
     app.post("/api/surveys", requireLogin, requireCredits, async (req, res) => {// requireLogin es la funcion que exporta el middleware, se ejecutan todas las funciones que pongamos como argunmentos hasta que llegue a la arrow function del routehandler
         //la req que estamos esperando del front tiene que tener atributos title, subject, body, recipients, _user
